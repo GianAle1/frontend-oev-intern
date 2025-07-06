@@ -12,7 +12,6 @@ class CourseCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final loggedUser = ref.read(authProvider).token;
-
     final isAdmin = loggedUser?.role == 'ADMIN';
 
     return InkWell(
@@ -20,7 +19,9 @@ class CourseCard extends ConsumerWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => isAdmin ? CourseEditableContent(course: course) : CourseDetailPage(courseId: course.id),
+            builder: (context) => isAdmin
+                ? CourseEditableContent(course: course)
+                : CourseDetailPage(courseId: course.id),
           ),
         );
       },
@@ -32,35 +33,96 @@ class CourseCard extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(
-              height: 13,
-            ),
+            const SizedBox(height: 13),
             Container(
-                height: 120,
-                decoration: BoxDecoration(
-                  color: const Color(0xFF32343E),
-                  borderRadius: BorderRadius.circular(12),
-                  image: DecorationImage(
-                    // image: AssetImage('assets/images/fisinext.png'),
-                    image: NetworkImage(course.imageUrl!),
-                    fit: BoxFit.cover,
-                  ),
-                )),
+              height: 120,
+              decoration: BoxDecoration(
+                color: const Color(0xFF32343E),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.network(
+                  course.imageUrl ?? '',
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  height: 120,
+                  errorBuilder: (context, error, stackTrace) {
+                    // Imagen por defecto cuando falla la carga
+                    return Container(
+                      width: double.infinity,
+                      height: 120,
+                      color: Colors.grey[700],
+                      child: const Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.image_not_supported,
+                            color: Colors.white54,
+                            size: 40,
+                          ),
+                          SizedBox(height: 4),
+                          Text(
+                            'Imagen no disponible',
+                            style: TextStyle(
+                              color: Colors.white54,
+                              fontSize: 10,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return Container(
+                      width: double.infinity,
+                      height: 120,
+                      color: Colors.grey[700],
+                      child: const Center(
+                        child: CircularProgressIndicator(
+                          color: Colors.white54,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(course.name, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white)),
+                  Text(
+                    course.name,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
                   const SizedBox(height: 4),
-                  Text(course.instructorName, style: const TextStyle(color: Colors.white70, fontSize: 12)),
+                  Text(
+                    course.instructorName,
+                    style: const TextStyle(
+                      color: Colors.white70,
+                      fontSize: 12,
+                    ),
+                  ),
                   const SizedBox(height: 4),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       const Icon(Icons.people, size: 16, color: Colors.white70),
                       const SizedBox(width: 4),
-                      Text(course.totalStudents.toString(), style: const TextStyle(color: Colors.white, fontSize: 12)),
+                      Text(
+                        course.totalStudents.toString(),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                        ),
+                      ),
                     ],
                   ),
                 ],

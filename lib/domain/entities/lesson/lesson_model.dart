@@ -23,12 +23,13 @@ class Lesson {
     return Lesson(
       id: json['id'],
       title: json['title'],
-      videoKey: json['videoKey'],
+      videoKey: json['video_key'],
       duration: json['duration'],
-      sequenceOrder: json['sequenceOrder'] ?? 0,
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
-      courseId: json['courseId'],
+      sequenceOrder: json['sequence_order'] ?? 0,
+      createdAt: DateTime.parse(json['created_at']),
+      updatedAt: json['updated_at'] != null ? DateTime.parse(json['updated_at']) : null,
+      courseId: json['course_id'],
     );
   }
+
 }
